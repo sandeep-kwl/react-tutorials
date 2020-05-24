@@ -1,42 +1,36 @@
 import React, { Component } from 'react';
-import List from './List';
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import { addProfile } from '../../store/actions';
 
 class Profile extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      form: {},
-      list: []
-    };
-  }
+  state = {
+    form: {},
+    redirect: false
+  };
 
   onChange = e => {
-    const { form } = this.state;
+    const targetValue = { [e.target.name]: e.target.value };
 
-    this.setState({
-      form: {
-        ...form,
-        [e.target.name]: e.target.value
-      }
-    });
+    this.setState(prevState => ({
+      form: { ...prevState.form, ...targetValue }
+    }));
   };
 
   submitForm = e => {
     e.preventDefault();
-    const { list, form } = this.state;
 
-    this.setState({
-      list: [...list, form],
-      form: {}
-    });
-
-    // form = { name:"Sandeep", profile:"Lead consultant" }
-    // list = [{name:"Sandeep", profile:"Lead consultant"}, {name:"Rajesh", profile:"Lead consultant"}, ...]
+    this.props.addProfile(this.state.form);
+    this.setState({ redirect: true });
   };
 
   render() {
-    const { form, list } = this.state;
+    const { form, redirect } = this.state;
+
+    if (redirect) {
+      return <Redirect to="/list" />;
+    }
 
     return (
       <>
@@ -54,7 +48,7 @@ class Profile extends Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="exampleInputPassword1">Profile</label>
+            <label htmlFor="exampleInputPassword1">position</label>
             <input
               type="text"
               name="position"
@@ -72,12 +66,12 @@ class Profile extends Component {
             Submit
           </button>
         </form>
-
-        {/* Below, the list component is called to show data table */}
-        <List list={list} />
       </>
     );
   }
 }
 
-export default Profile;
+export default connect(
+  null,
+  { addProfile }
+)(Profile);

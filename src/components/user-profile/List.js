@@ -1,7 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { isEmpty } from '../../utils';
 
-const List = ({ list }) => {
+const List = props => {
+  const { list } = props;
+
   return (
     <table className="table mb-4">
       <thead>
@@ -30,4 +33,8 @@ const List = ({ list }) => {
   );
 };
 
-export default List;
+const mapStateToProps = state => ({
+  list: state.list
+});
+
+export default connect(mapStateToProps)(List);
